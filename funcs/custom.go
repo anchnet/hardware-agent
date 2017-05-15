@@ -10,7 +10,6 @@ import (
 	"io"
 	"strings"
 	"strconv"
-	"reflect"
 )
 
 func CustomMetrics() (L []*model.MetricValue) {
@@ -51,11 +50,12 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 			tag := s[0]
 			value := s[1]
 			value = strings.Replace(value, "\n", "", -1)
-			fmt.Println(s[1])
 			tags := fmt.Sprintf("name=%s", tag)
-			val, _ := strconv.ParseFloat(value, 64)
-			fmt.Println(i, "name=" + tag + ",value=" + value, "val=", val, reflect.TypeOf(value))
-			L = append(L, GaugeValue("custom.data", val, tags))
+			if val, err := strconv.ParseFloat(value, 64); err == nil {
+				L = append(L, GaugeValue("custom.data", val, tags))
+			} else {
+				log.Println("[ERROR] value parse float error , the value is ", value)
+			}
 			i++
 		}
 	}
