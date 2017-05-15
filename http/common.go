@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"../g"
+	"github.com/51idc/custom-agent/g"
 	"github.com/toolkits/file"
 )
 

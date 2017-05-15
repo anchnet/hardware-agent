@@ -1,7 +1,7 @@
 package funcs
 
 import (
-	"../g"
+	"github.com/51idc/custom-agent/g"
 	"github.com/open-falcon/common/model"
 )
 

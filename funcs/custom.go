@@ -3,7 +3,7 @@ package funcs
 import (
 	"github.com/open-falcon/common/model"
 	"log"
-	"../g"
+	"github.com/51idc/custom-agent/g"
 	"os/exec"
 	"fmt"
 	"bufio"

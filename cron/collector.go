@@ -3,9 +3,9 @@ package cron
 import (
 	"time"
 
-	"../g"
+	"github.com/51idc/custom-agent/g"
 	"github.com/open-falcon/common/model"
-	"../funcs"
+	"github.com/51idc/custom-agent/funcs"
 	"fmt"
 )
 
