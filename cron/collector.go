@@ -6,7 +6,6 @@ import (
 	"github.com/51idc/custom-agent/g"
 	"github.com/open-falcon/common/model"
 	"github.com/51idc/custom-agent/funcs"
-	"fmt"
 )
 
 func Collect() {
@@ -57,7 +56,6 @@ func collect(sec int64, fns []func() []*model.MetricValue) {
 			mvs[j].Endpoint = hostname
 			mvs[j].Timestamp = now
 		}
-		fmt.Printf("mvs val ",mvs)
 		g.SendToTransfer(mvs)
 
 	}

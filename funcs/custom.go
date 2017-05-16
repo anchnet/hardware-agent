@@ -16,7 +16,6 @@ func CustomMetrics() (L []*model.MetricValue) {
 	path_list := g.Config().FilePath
 	for _, fpath := range path_list {
 		L = path_file_exec(fpath, L)
-		fmt.Printf("out:", L)
 	}
 	return L
 }
@@ -25,24 +24,22 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 	cmd := exec.Command(fpath)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		fmt.Println("cmd.Output: ", err)
+		log.Println("[ERROR] exec custom file ", fpath, "fail. error:", err)
 		return nil
 	}
 	cmd.Start()
 	buff := bufio.NewReader(stdout)
+	//buff.Peek(1)
+	//log.Println(buff.Buffered())
 
-	if err != nil {
-		log.Println("[ERROR] exec custom file ", fpath, "fail. error:", err)
-		return nil
-	}
+	//if (buff.Buffered() == 0) {
+	//	log.Println("[DEBUG] stdout of", fpath, "is blank")
+	//} else {
 	// exec successfully
-	var i = 0
 	for {
 		buf, err := buff.ReadString('\n')
-		if err == io.EOF {
-			if (i == 0) {
-				log.Println("[DEBUG] stdout of", fpath, "is blank")
-			}
+		if err != nil && err != io.EOF {
+			log.Println("[ERROR] stdout of", fpath, "error :", err)
 			break
 		}
 		s := strings.Split(buf, " ")
@@ -56,9 +53,12 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 			} else {
 				log.Println("[ERROR] value parse float error , the value is ", value)
 			}
-			i++
+		}
+		if err == io.EOF {
+			break
 		}
 	}
+	//}
 
 	return L
 }
