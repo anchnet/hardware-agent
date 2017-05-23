@@ -22,6 +22,13 @@ func CustomMetrics() (L []*model.MetricValue) {
 
 func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue) {
 	cmd := exec.Command(fpath)
+	if (strings.Contains(fpath, " ")) {
+		sep_index := strings.Index(fpath, " ")
+		arg1 := fpath[0:sep_index]
+		arg2 := fpath[sep_index + 1:len([]rune(fpath))]
+		log.Println("[INFO] multi args , exec :", arg1, arg2)
+		cmd = exec.Command(arg1, arg2)
+	}
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Println("[ERROR] exec custom file ", fpath, "fail. error:", err)
