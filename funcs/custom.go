@@ -66,6 +66,7 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 		}
 	}
 	//}
+	cmd.Wait()
 
 	return L
 }
