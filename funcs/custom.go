@@ -10,8 +10,8 @@ import (
 	"io"
 	"strings"
 	"strconv"
-	"github.com/toolkits/sys"
-	"time"
+	//"github.com/toolkits/sys"
+	//"time"
 )
 
 func CustomMetrics() (L []*model.MetricValue) {
@@ -38,19 +38,19 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 	}
 	cmd.Start()
 
-	err_to, isTimeout := sys.CmdRunWithTimeout(cmd, g.Config().ExecTimeout * time.Millisecond)
-	if isTimeout {
-		// has be killed
-		if err_to == nil {
-			log.Println("[INFO] timeout and kill process", fpath, "successfully")
-		}
-
-		if err_to != nil {
-			log.Println("[ERROR] kill process", fpath, "occur error:", err_to)
-		}
-
-		return L
-	}
+	//err_to, isTimeout := sys.CmdRunWithTimeout(cmd, 1000 * time.Millisecond)
+	//if isTimeout {
+	//	// has be killed
+	//	if err_to == nil {
+	//		log.Println("[INFO] timeout and kill process", fpath, "successfully")
+	//	}
+	//
+	//	if err_to != nil {
+	//		log.Println("[ERROR] kill process", fpath, "occur error:", err_to)
+	//	}
+	//
+	//	return L
+	//}
 
 	buff := bufio.NewReader(stdout)
 	//buff.Peek(1)
