@@ -10,8 +10,7 @@ import (
 	"io"
 	"strings"
 	"strconv"
-	//"github.com/toolkits/sys"
-	//"time"
+	"time"
 )
 
 func CustomMetrics() (L []*model.MetricValue) {
@@ -38,19 +37,19 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 	}
 	cmd.Start()
 
-	//err_to, isTimeout := sys.CmdRunWithTimeout(cmd, 1000 * time.Millisecond)
-	//if isTimeout {
-	//	// has be killed
-	//	if err_to == nil {
-	//		log.Println("[INFO] timeout and kill process", fpath, "successfully")
-	//	}
-	//
-	//	if err_to != nil {
-	//		log.Println("[ERROR] kill process", fpath, "occur error:", err_to)
-	//	}
-	//
-	//	return L
-	//}
+	err_to, isTimeout := CmdRunWithTimeout(cmd, g.Config().ExecTimeout * time.Millisecond)
+	if isTimeout {
+		// has be killed
+		if err_to == nil {
+			log.Println("[INFO] timeout and kill process", fpath, "successfully")
+		}
+
+		if err_to != nil {
+			log.Println("[ERROR] kill process", fpath, "occur error:", err_to)
+		}
+
+		return L
+	}
 
 	buff := bufio.NewReader(stdout)
 	//buff.Peek(1)
@@ -86,4 +85,38 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 	cmd.Wait()
 
 	return L
+}
+
+func CmdRunWithTimeout(cmd *exec.Cmd, timeout time.Duration) (error, bool) {
+	var err error
+
+	//set group id
+	//err = syscall.Setpgid(cmd.Process.Pid, cmd.Process.Pid)
+	if err != nil {
+		log.Println("Setpgid failed, error:", err)
+	}
+
+	done := make(chan error)
+	go func() {
+		done <- cmd.Wait()
+	}()
+
+	select {
+	case <-time.After(timeout):
+		log.Printf("timeout, process:%s will be killed", cmd.Path)
+
+		go func() {
+			<-done // allow goroutine to exit
+		}()
+
+	// cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true} is necessary before cmd.Start()
+		err = cmd.Process.Kill()
+		if err != nil {
+			log.Println("kill failed, error:", err)
+		}
+
+		return err, true
+	case err = <-done:
+		return err, false
+	}
 }
