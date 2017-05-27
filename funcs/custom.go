@@ -6,11 +6,11 @@ import (
 	"github.com/51idc/custom-agent/g"
 	"os/exec"
 	"fmt"
-	"bufio"
-	"io"
 	"strings"
-	"strconv"
 	"time"
+	"io"
+	"strconv"
+	"bytes"
 )
 
 func CustomMetrics() (L []*model.MetricValue) {
@@ -30,11 +30,9 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 		log.Println("[INFO] multi args , exec :", arg1, arg2)
 		cmd = exec.Command(arg1, arg2)
 	}
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		log.Println("[ERROR] exec custom file ", fpath, "fail. error:", err)
-		return nil
-	}
+
+	var stdout bytes.Buffer
+	cmd.Stdout = &stdout
 	cmd.Start()
 
 	err_to, isTimeout := CmdRunWithTimeout(cmd, g.Config().ExecTimeout * time.Millisecond)
@@ -51,16 +49,9 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 		return L
 	}
 
-	buff := bufio.NewReader(stdout)
-	//buff.Peek(1)
-	//log.Println(buff.Buffered())
-
-	//if (buff.Buffered() == 0) {
-	//	log.Println("[DEBUG] stdout of", fpath, "is blank")
-	//} else {
 	// exec successfully
 	for {
-		buf, err := buff.ReadString('\n')
+		buf, err := stdout.ReadString('\n')
 		if err != nil && err != io.EOF {
 			log.Println("[ERROR] stdout of", fpath, "error :", err)
 			break
@@ -81,8 +72,6 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 			break
 		}
 	}
-	//}
-	cmd.Wait()
 
 	return L
 }
