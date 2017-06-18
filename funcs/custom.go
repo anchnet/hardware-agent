@@ -61,11 +61,13 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 			tag := s[0]
 			value := s[1]
 			value = strings.Replace(value, "\n", "", -1)
+			value = strings.Replace(value, "\r", "", -1)
 			tags := fmt.Sprintf("name=%s", tag)
 			if val, err := strconv.ParseFloat(value, 64); err == nil {
 				L = append(L, GaugeValue("custom.data", val, tags))
 			} else {
 				log.Println("[ERROR] value parse float error , the value is ", value)
+				log.Println("err : ", err.Error())
 			}
 		}
 		if err == io.EOF {
