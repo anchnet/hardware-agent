@@ -45,8 +45,10 @@ type GlobalConfig struct {
 	Transfer    *TransferConfig  `json:"transfer"`
 	Http        *HttpConfig      `json:"http"`
 	SmartAPI    string           `json:"smartapi"`
-	FilePath    []string           `json:"filepath"`
-	ExecTimeout time.Duration  `json:"exectimeout"`
+	FilePath    []string         `json:"filepath"`
+	ExecTimeout time.Duration    `json:"exectimeout"`
+	StartTime   string           `json:"starttime"`
+	Cycle       time.Duration    `json:cycle`
 }
 
 var (

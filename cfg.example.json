@@ -28,7 +28,9 @@
     "backdoor": false
   },
   "filepath": [
-    "D:/myspace/smarteye-windows-agent/hello.exe"
+    "D:/Temp/echo.bat"
   ],
-  "exectimeout": 2000
+  "exectimeout": 2000,
+  "starttime": "undefined",
+  "cycle": 0
 }

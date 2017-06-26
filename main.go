@@ -8,6 +8,8 @@ import (
 	"github.com/51idc/custom-agent/funcs"
 	"github.com/51idc/custom-agent/cron"
 	"github.com/51idc/custom-agent/http"
+	"time"
+	"log"
 )
 
 func main() {
@@ -30,6 +32,15 @@ func main() {
 	g.InitRootDir()
 	g.InitLocalIps()
 	g.InitRpcClients()
+	if (g.Config().StartTime != "undefined") {
+		log.Println("collecting will start at :", g.Config().StartTime)
+		for {
+			if (g.Config().StartTime == time.Now().Format("15:04")) {
+				break;
+			}
+			time.Sleep(60)
+		}
+	}
 	funcs.BuildMappers()
 	cron.Collect()
 
