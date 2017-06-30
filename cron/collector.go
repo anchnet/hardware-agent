@@ -24,6 +24,7 @@ func Collect() {
 		} else {
 			go collect(int64(v.Interval), v.Fs)
 		}
+		go collect(int64(v.Interval), v.FsAlive)
 	}
 }
 

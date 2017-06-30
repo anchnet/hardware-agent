@@ -7,6 +7,7 @@ import (
 
 type FuncsAndInterval struct {
 	Fs       []func() []*model.MetricValue
+	FsAlive  []func() []*model.MetricValue
 	Interval int
 }
 
@@ -17,8 +18,10 @@ func BuildMappers() {
 	Mappers = []FuncsAndInterval{
 		FuncsAndInterval{
 			Fs: []func() []*model.MetricValue{
-				AgentMetrics,
 				CustomMetrics,
+			},
+			FsAlive: []func() []*model.MetricValue{
+				AgentMetrics,
 			},
 			Interval: interval,
 		},
