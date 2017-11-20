@@ -2,8 +2,8 @@ package funcs
 
 import (
 	"github.com/open-falcon/common/model"
-	"log"
-	"github.com/51idc/custom-agent/g"
+	log "github.com/cihub/seelog"
+	"github.com/anchnet/custom-agent/g"
 	"os/exec"
 	"fmt"
 	"strings"
@@ -27,7 +27,7 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 		sep_index := strings.Index(fpath, " ")
 		arg1 := fpath[0:sep_index]
 		arg2 := fpath[sep_index + 1:len([]rune(fpath))]
-		log.Println("[INFO] multi args , exec :", arg1, arg2)
+		log.Info("[INFO] multi args , exec :", arg1, arg2)
 		cmd = exec.Command(arg1, arg2)
 	}
 
@@ -39,11 +39,11 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 	if isTimeout {
 		// has be killed
 		if err_to == nil {
-			log.Println("[INFO] timeout and kill process", fpath, "successfully")
+			log.Info("[INFO] timeout and kill process", fpath, "successfully")
 		}
 
 		if err_to != nil {
-			log.Println("[ERROR] kill process", fpath, "occur error:", err_to)
+			log.Info("[ERROR] kill process", fpath, "occur error:", err_to)
 		}
 
 		return L
@@ -53,7 +53,7 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 	for {
 		buf, err := stdout.ReadString('\n')
 		if err != nil && err != io.EOF {
-			log.Println("[ERROR] stdout of", fpath, "error :", err)
+			log.Info("[ERROR] stdout of", fpath, "error :", err)
 			break
 		}
 		s := strings.Split(buf, " ")
@@ -66,8 +66,8 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 			if val, err := strconv.ParseFloat(value, 64); err == nil {
 				L = append(L, GaugeValue("custom.data", val, tags))
 			} else {
-				log.Println("[ERROR] value parse float error , the value is ", value)
-				log.Println("err : ", err.Error())
+				log.Info("[ERROR] value parse float error , the value is ", value)
+				log.Info("err : ", err.Error())
 			}
 		}
 		if err == io.EOF {
@@ -84,7 +84,7 @@ func CmdRunWithTimeout(cmd *exec.Cmd, timeout time.Duration) (error, bool) {
 	//set group id
 	//err = syscall.Setpgid(cmd.Process.Pid, cmd.Process.Pid)
 	if err != nil {
-		log.Println("Setpgid failed, error:", err)
+		log.Info("Setpgid failed, error:", err)
 	}
 
 	done := make(chan error)
@@ -94,7 +94,7 @@ func CmdRunWithTimeout(cmd *exec.Cmd, timeout time.Duration) (error, bool) {
 
 	select {
 	case <-time.After(timeout):
-		log.Printf("timeout, process:%s will be killed", cmd.Path)
+		log.Infof("timeout, process:%s will be killed", cmd.Path)
 
 		go func() {
 			<-done // allow goroutine to exit
@@ -103,7 +103,7 @@ func CmdRunWithTimeout(cmd *exec.Cmd, timeout time.Duration) (error, bool) {
 	// cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true} is necessary before cmd.Start()
 		err = cmd.Process.Kill()
 		if err != nil {
-			log.Println("kill failed, error:", err)
+			log.Info("kill failed, error:", err)
 		}
 
 		return err, true

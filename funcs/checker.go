@@ -8,7 +8,7 @@ func CheckCollector() {
 
 	output := make(map[string]bool)
 
-	output["port  "] = len(PortMetrics()) > 0
+	output["custom  "] = len(CustomMetrics()) > 0
 
 	for k, v := range output {
 		status := "fail"
