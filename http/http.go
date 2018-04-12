@@ -6,7 +6,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
-	"github.com/anchnet/custom-agent/g"
+	"github.com/anchnet/hardware-agent/g"
 )
 
 type Dto struct {

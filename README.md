@@ -1,7 +1,7 @@
-# custom-agent
-custom agent 
+# hardware-agent
+hardware agent 
 
-基于小米运维开源的open-falcon，自定义监控专用agent。
+基于小米运维开源的open-falcon，硬件监控专用agent。
 
 ##采集的metric列表：
   custom.agent.alive

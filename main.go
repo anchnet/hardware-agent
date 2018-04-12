@@ -8,10 +8,10 @@ import (
 
 	log "github.com/cihub/seelog"
 
-	"github.com/anchnet/custom-agent/cron"
-	"github.com/anchnet/custom-agent/funcs"
-	"github.com/anchnet/custom-agent/g"
-	"github.com/anchnet/custom-agent/http"
+	"github.com/anchnet/hardware-agent/cron"
+	"github.com/anchnet/hardware-agent/funcs"
+	"github.com/anchnet/hardware-agent/g"
+	"github.com/anchnet/hardware-agent/http"
 )
 
 func main() {

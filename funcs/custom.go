@@ -3,7 +3,7 @@ package funcs
 import (
 	"github.com/open-falcon/common/model"
 	log "github.com/cihub/seelog"
-	"github.com/anchnet/custom-agent/g"
+	"github.com/anchnet/hardware-agent/g"
 	"os/exec"
 	"fmt"
 	"strings"
