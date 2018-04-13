@@ -3,21 +3,20 @@ package funcs
 import (
 	"github.com/open-falcon/common/model"
 	log "github.com/cihub/seelog"
-	"github.com/anchnet/hardware-agent/g"
+	//"github.com/anchnet/hardware-agent/g"
 	"os/exec"
 	"fmt"
 	"strings"
 	"time"
 	"io"
-	"strconv"
+	//"strconv"
 	"bytes"
 )
 
-func CustomMetrics() (L []*model.MetricValue) {
-	path_list := g.Config().FilePath
-	for _, fpath := range path_list {
-		L = path_file_exec(fpath, L)
-	}
+func HardwareMetrics() (L []*model.MetricValue) {
+	log.Info("[INFO] start ipmitool at : ", time.Now().Format("15:04"))
+	L = path_file_exec("./ipmitool.sh", L)
+	log.Info("[INFO] end ipmitool at : ", time.Now().Format("15:04"))
 	return L
 }
 
@@ -35,7 +34,7 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 	cmd.Stdout = &stdout
 	cmd.Start()
 
-	err_to, isTimeout := CmdRunWithTimeout(cmd, g.Config().ExecTimeout * time.Millisecond)
+	err_to, isTimeout := CmdRunWithTimeout(cmd, 10 * time.Minute)
 	if isTimeout {
 		// has be killed
 		if err_to == nil {
@@ -56,20 +55,21 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 			log.Info("[ERROR] stdout of", fpath, "error :", err)
 			break
 		}
-		s := strings.Split(buf, " ")
-		if (len(s) > 1) {
-			tag := s[0]
-			value := s[1]
-			value = strings.Replace(value, "\n", "", -1)
-			value = strings.Replace(value, "\r", "", -1)
-			tags := fmt.Sprintf("name=%s", tag)
-			if val, err := strconv.ParseFloat(value, 64); err == nil {
-				L = append(L, GaugeValue("custom.data", val, tags))
-			} else {
-				log.Info("[ERROR] value parse float error , the value is ", value)
-				log.Info("err : ", err.Error())
-			}
-		}
+		s := strings.Split(buf, "|")
+		fmt.Println(s)
+		//if (len(s) > 1) {
+		//	tag := s[0]
+		//	value := s[1]
+		//	value = strings.Replace(value, "\n", "", -1)
+		//	value = strings.Replace(value, "\r", "", -1)
+		//	tags := fmt.Sprintf("name=%s", tag)
+		//	if val, err := strconv.ParseFloat(value, 64); err == nil {
+		//		L = append(L, GaugeValue("custom.data", val, tags))
+		//	} else {
+		//		log.Info("[ERROR] value parse float error , the value is ", value)
+		//		log.Info("err : ", err.Error())
+		//	}
+		//}
 		if err == io.EOF {
 			break
 		}

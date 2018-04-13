@@ -18,7 +18,7 @@ func BuildMappers() {
 	Mappers = []FuncsAndInterval{
 		FuncsAndInterval{
 			Fs: []func() []*model.MetricValue{
-				CustomMetrics,
+				HardwareMetrics,
 			},
 			FsAlive: []func() []*model.MetricValue{
 				AgentMetrics,
