@@ -11,6 +11,7 @@ import (
 	"io"
 	//"strconv"
 	"bytes"
+	"strconv"
 )
 
 func HardwareMetrics() (L []*model.MetricValue) {
@@ -56,20 +57,48 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 			break
 		}
 		s := strings.Split(buf, "|")
-		fmt.Println(s)
-		//if (len(s) > 1) {
-		//	tag := s[0]
-		//	value := s[1]
-		//	value = strings.Replace(value, "\n", "", -1)
-		//	value = strings.Replace(value, "\r", "", -1)
-		//	tags := fmt.Sprintf("name=%s", tag)
-		//	if val, err := strconv.ParseFloat(value, 64); err == nil {
-		//		L = append(L, GaugeValue("custom.data", val, tags))
-		//	} else {
-		//		log.Info("[ERROR] value parse float error , the value is ", value)
-		//		log.Info("err : ", err.Error())
-		//	}
-		//}
+		//fmt.Println(s)
+		if (len(s) > 1) {
+			//deal with s[3] , get Value
+			if strings.Contains(s[3], "No Reading") || strings.Contains(s[3], "Disabled") {
+				//如果值为No Reading或Disabled，则丢弃数据
+				log.Info("[INFO] Drop Data : ", s[3])
+				continue
+			}
+			value_arr := strings.Split(strings.Trim(s[3], " "), " ")
+			value := strings.Replace(value_arr[0], "h\n", "", -1)
+			//log.Info("[INFO] Value : ", value)
+
+			// deal with s[0] , get Entity Number
+			entity_arr := strings.Split(s[0], "(")
+			entity_value := strings.TrimSpace(entity_arr[0])
+			//log.Info("[INFO] Entity_ID : ", entity_value)
+
+			entity_name_arr := strings.Split(entity_arr[1], ")")
+			entity_name := strings.TrimSpace(entity_name_arr[0])
+			entity_name = strings.Replace(entity_name, " ", "_", -1)
+			//log.Info("[INFO] Entity_Name : ", entity_name)
+
+			//deal with s[1] , get Metric
+			metric_arr := strings.Split(s[1], "(")
+			metric := strings.Replace(strings.Trim(metric_arr[0], " "), " ", "_", -1)
+			metric = strings.Replace(metric, "_/_", "_", -1)
+			//log.Info("[INFO] Metric : ", metric)
+
+			//deal with s[2] , get Type
+			type_arr := strings.Split(s[2], "(")
+			sensor_type := strings.Replace(strings.Trim(type_arr[0], " "), " ", "_", -1)
+			sensor_type = strings.Replace(sensor_type, "_/_", "_", -1)
+			//log.Info("[INFO] Sensor_Type : ", sensor_type)
+
+			tags := fmt.Sprintf("entity_name=%s,entity_id=%s,sensor_type=%s", entity_name, entity_value, sensor_type)
+			if val, err := strconv.ParseFloat(value, 64); err == nil {
+				L = append(L, GaugeValue(metric, val, tags))
+			} else {
+				log.Info("[ERROR] value parse float error , the value is ", value)
+				log.Info("err : ", err.Error())
+			}
+		}
 		if err == io.EOF {
 			break
 		}

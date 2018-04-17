@@ -8,7 +8,7 @@ func CheckCollector() {
 
 	output := make(map[string]bool)
 
-	output["custom  "] = len(CustomMetrics()) > 0
+	output["hardware  "] = len(HardwareMetrics()) > 0
 
 	for k, v := range output {
 		status := "fail"
