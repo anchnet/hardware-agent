@@ -27,10 +27,6 @@
     "listen": ":1988",
     "backdoor": false
   },
-  "filepath": [
-    "D:/Temp/echo.bat"
-  ],
   "exectimeout": 2000,
-  "starttime": "undefined",
   "cycle": 0
 }

@@ -12,6 +12,7 @@ import (
 	//"strconv"
 	"bytes"
 	"strconv"
+	"github.com/anchnet/hardware-agent/g"
 )
 
 func HardwareMetrics() (L []*model.MetricValue) {
@@ -35,7 +36,7 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 	cmd.Stdout = &stdout
 	cmd.Start()
 
-	err_to, isTimeout := CmdRunWithTimeout(cmd, 10 * time.Minute)
+	err_to, isTimeout := CmdRunWithTimeout(cmd, g.Config().ExecTimeout * time.Second)
 	if isTimeout {
 		// has be killed
 		if err_to == nil {
