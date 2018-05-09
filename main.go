@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"time"
+	//"time"
 
-	log "github.com/cihub/seelog"
+	//log "github.com/cihub/seelog"
 
 	"github.com/anchnet/hardware-agent/cron"
 	"github.com/anchnet/hardware-agent/funcs"
@@ -37,15 +37,15 @@ func main() {
 	g.InitRootDir()
 	g.InitLocalIps()
 	g.InitRpcClients()
-	if g.Config().StartTime != "undefined" {
-		log.Info("collecting will start at :", g.Config().StartTime)
-		for {
-			if g.Config().StartTime == time.Now().Format("15:04") {
-				break
-			}
-			time.Sleep(60)
-		}
-	}
+	//if g.Config().StartTime != "undefined" {
+	//	log.Info("collecting will start at :", g.Config().StartTime)
+	//	for {
+	//		if g.Config().StartTime == time.Now().Format("15:04") {
+	//			break
+	//		}
+	//		time.Sleep(60)
+	//	}
+	//}
 	funcs.BuildMappers()
 	cron.Collect()
 

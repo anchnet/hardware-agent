@@ -66,7 +66,7 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 				continue
 			}
 			value_arr := strings.Split(strings.Trim(s[3], " "), " ")
-			value := strings.Replace(value_arr[0], "h\n", "", -1)
+			value := strings.Replace(value_arr[0], "h", "", -1)
 			//log.Info("[INFO] Value : ", value)
 
 			// deal with s[0] , get Entity Number
@@ -80,9 +80,9 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 			//log.Info("[INFO] Entity_Name : ", entity_name)
 
 			//deal with s[1] , get Metric
-			metric_arr := strings.Split(s[1], "(")
-			metric := strings.Replace(strings.Trim(metric_arr[0], " "), " ", "_", -1)
-			metric = strings.Replace(metric, "_/_", "_", -1)
+			sensor_id_arr := strings.Split(s[1], "(")
+			sensor_id := strings.Replace(strings.Trim(sensor_id_arr[0], " "), " ", "_", -1)
+			sensor_id = strings.Replace(sensor_id, "_/_", "_", -1)
 			//log.Info("[INFO] Metric : ", metric)
 
 			//deal with s[2] , get Type
@@ -91,11 +91,27 @@ func path_file_exec(fpath string, L []*model.MetricValue) ([]*model.MetricValue)
 			sensor_type = strings.Replace(sensor_type, "_/_", "_", -1)
 			//log.Info("[INFO] Sensor_Type : ", sensor_type)
 
-			tags := fmt.Sprintf("entity_name=%s,entity_id=%s,sensor_type=%s", entity_name, entity_value, sensor_type)
+			//deal with s[4] , get Status
+			status_flag := 0
+			var status_value int64;
+			status_arr := strings.Trim(s[4], " ")
+			if len(status_arr) > 1 {
+				status_flag = 1
+				if strings.Contains(s[4], "ok") {
+					status_value = 0
+				} else {
+					status_value = -1
+				}
+			}
+
+			tags := fmt.Sprintf("sensor_id=%s,entity_name=%s,entity_id=%s", sensor_id, entity_name, entity_value)
 			if val, err := strconv.ParseFloat(value, 64); err == nil {
-				L = append(L, GaugeValue(metric, val, tags))
+				L = append(L, GaugeValue(sensor_type, val, tags))
+				if (status_flag > 0) {
+					L = append(L, GaugeValue(sensor_type + ".status", status_value, tags))
+				}
 			} else {
-				log.Info("[ERROR] value parse float error , the value is ", value)
+				log.Info("[ERROR] value parse float error , the value is ", value, " . Metric Counter is :", sensor_type, "/", tags)
 				log.Info("err : ", err.Error())
 			}
 		}
