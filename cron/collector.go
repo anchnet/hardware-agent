@@ -19,8 +19,8 @@ func Collect() {
 	}
 
 	for _, v := range funcs.Mappers {
-		if (g.Config().Cycle > 0) {
-			go collect(int64(g.Config().Cycle), v.Fs)
+		if (g.Config().ExecTimeout > 0) {
+			go collect(int64(g.Config().ExecTimeout), v.Fs)
 		} else {
 			go collect(int64(v.Interval), v.Fs)
 		}

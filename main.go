@@ -47,6 +47,8 @@ func main() {
 	//	}
 	//}
 	funcs.BuildMappers()
+
+	ReportSysInfo()
 	cron.Collect()
 
 	go http.Start()

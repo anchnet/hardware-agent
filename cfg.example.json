@@ -1,6 +1,7 @@
 {
   "debug": true,
   "hostname": "zhangt-custom-data",
+  "smartapi": "https://devsmarteye.anchnet.com/api/hardware/info",
   "plugin": {
     "enabled": false,
     "dir": "./plugin",
@@ -27,6 +28,6 @@
     "listen": ":1988",
     "backdoor": false
   },
-  "exectimeout": 2000,
+  "exectimeout": 0,
   "cycle": 0
 }

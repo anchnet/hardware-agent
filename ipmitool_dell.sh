@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-HOST=118.184.72.242
+HOST=192.168.106.105
 USER=root
-PWD=u4ymHar7
+PWD=root
 ipmitool -H $HOST -I lanplus -U $USER -P $PWD -v sdr list|while read line
 do
 if [[ $line =~ 'Sensor ID' ]];then
